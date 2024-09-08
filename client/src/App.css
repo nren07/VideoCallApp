@@ -1,0 +1,24 @@
+
+*{
+  margin: 0px;
+  padding: 0px;
+}
+.react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+}
+.player-wrapper {
+  position: relative;
+  width: 98vw;
+  height: 98vh;
+  border: 2px solid gray;
+}
+.react-player-remote{
+  position: absolute;
+  top: 0;
+  left: 0;
+ 
+}
+
