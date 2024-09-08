@@ -8,9 +8,8 @@ const Room=()=>{
     const [remoteUserId,setRemoteUserId]=useState(null);
     const [myStream,setMyStream]=useState();
     const [remoteStream,setRemoteStream]=useState();
-
     const socket=useSocket();
-    const playerRef=useRef();
+
     const handleClick=useCallback(async()=>{
         console.log("handle click",{myStream});
         const offer=await peer.getOffer();
@@ -28,7 +27,7 @@ const Room=()=>{
     const handleUserJoin=useCallback((data)=>{
         const {email,id}=data;
         console.log(email," Joined the Room and socket Id is ",id);
-        setRemoteUserId(id);  
+        setRemoteUserId(id); 
     },[socket]);
 
     const videoStream=useCallback(async()=>{
@@ -40,9 +39,7 @@ const Room=()=>{
 
     const handleCallAccept=useCallback(async({from,ans})=>{
         await peer.setRemoteDescription(ans);
-        sendStream();
-        
-    },[sendStream]);
+    },[]);
     const handleIncommingCall=useCallback(async(data)=>{
         // console.log("handle incomming call",{myStream});
         const {from,offer}=data;
@@ -88,6 +85,14 @@ const Room=()=>{
     },[socket]);
 
     useEffect(()=>{
+        handleClick();
+    },[remoteUserId]);
+
+    useEffect(()=>{
+        sendStream();
+    },[handleNegoNeededFinal,sendStream,socket]);
+
+    useEffect(()=>{
         socket.on("user:joined-room",handleUserJoin);
         socket.on("incomming:call",handleIncommingCall);
         socket.on('call:accept',handleCallAccept);
@@ -107,8 +112,6 @@ const Room=()=>{
     return (
         <div>
             <h1>Room Page</h1>
-            {remoteUserId && <h2>connected</h2>}
-            {remoteUserId && <button onClick={handleClick}>Call</button>}
             {myStream && <button onClick={sendStream}>Send Stream</button>}
             {myStream &&<div>
             <h2>My Video</h2>
@@ -118,7 +121,6 @@ const Room=()=>{
                     muted
                     width="200px"
                     height="200px"
-                    ref={playerRef}
             />
             </div>
             }
@@ -130,7 +132,7 @@ const Room=()=>{
                     muted
                     width="200px"
                     height="200px"
-                    ref={playerRef}
+                   
             />
             </div>
             }
